@@ -14,7 +14,6 @@
       --nba-accent: #1a6db5;
       --nba-accent-soft: #1d3a5c;
       --nba-stat: #60a5fa;
-      --nba-toggle-active: #1a6db5;
 
       --nfl-bg: #100608;
       --nfl-surface: #1a0a0c;
@@ -22,7 +21,6 @@
       --nfl-accent: #b51a26;
       --nfl-accent-soft: #5c1d22;
       --nfl-stat: #f87171;
-      --nfl-toggle-active: #b51a26;
 
       --text-primary: #f0f4f8;
       --text-secondary: #8899aa;
@@ -57,30 +55,27 @@
       --stat-color: var(--nfl-stat);
     }
 
-    /* Header */
     header {
       padding: 2rem 1.5rem 0;
       max-width: 820px;
       margin: 0 auto;
     }
 
-    .date-line {
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 1.2rem;
-      text-transform: uppercase;
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    /* Toggle */
     .toggle {
       display: inline-flex;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 6px;
       overflow: hidden;
-      margin-bottom: 2.5rem;
     }
 
     .toggle-btn {
@@ -100,7 +95,36 @@
       color: #fff;
     }
 
-    /* Matches */
+    /* Date selector */
+    .date-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+    }
+
+    .date-selector select {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      max-width: 200px;
+    }
+
+    .date-selector select option {
+      background: #1a1a2e;
+      color: var(--text-primary);
+    }
+
+    .date-icon { font-size: 0.9rem; color: var(--text-muted); }
+
     .container {
       max-width: 820px;
       margin: 0 auto;
@@ -117,6 +141,15 @@
       color: var(--text-muted);
       text-transform: uppercase;
       margin-bottom: 1rem;
+    }
+
+    /* Loading / empty state */
+    .state-msg {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 3rem 1rem;
+      font-style: italic;
     }
 
     .match-card {
@@ -162,11 +195,7 @@
       text-align: center;
     }
 
-    .vs {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    .vs { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
     .mvp-pill {
       font-size: 0.72rem;
@@ -187,16 +216,29 @@
 
     .match-card.open .expand-icon { transform: rotate(180deg); }
 
-    /* Stats panel */
     .stats-panel {
       display: none;
       border-top: 1px solid var(--border);
-      padding: 0 1.25rem 1.25rem;
     }
 
     .match-card.open .stats-panel { display: block; }
 
-    .team-stats-block { margin-top: 1.25rem; }
+    .match-summary {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      padding: 1rem 1.25rem;
+      font-style: italic;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .match-summary strong {
+      color: var(--stat-color);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .team-stats-block { padding: 0 1.25rem 1.25rem; margin-top: 1.25rem; }
 
     .team-stats-title {
       font-size: 0.7rem;
@@ -207,7 +249,6 @@
       margin-bottom: 0.6rem;
     }
 
-    /* NBA stats table */
     .stats-table {
       width: 100%;
       border-collapse: collapse;
@@ -239,13 +280,8 @@
     }
 
     .stats-table tr:last-child td { border-bottom: none; }
+    .stat-highlight { color: var(--stat-color); font-weight: 600; }
 
-    .stat-highlight {
-      color: var(--stat-color);
-      font-weight: 600;
-    }
-
-    /* NFL position group */
     .position-group { margin-bottom: 1rem; }
 
     .position-label {
@@ -258,23 +294,6 @@
       padding-left: 0.5rem;
     }
 
-    .match-summary {
-      font-size: 0.85rem;
-      line-height: 1.65;
-      color: var(--text-secondary);
-      padding: 1rem 1.25rem 0;
-      font-style: italic;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 0.25rem;
-    }
-
-    .match-summary strong {
-      color: var(--stat-color);
-      font-style: normal;
-      font-weight: 600;
-    }
-
-    /* Footer */
     footer {
       text-align: center;
       color: var(--text-muted);
@@ -289,6 +308,7 @@
       .team-name { min-width: 80px; font-size: 0.82rem; }
       .score-block { font-size: 1.6rem; }
       .mvp-pill { display: none; }
+      .top-bar { flex-direction: column; align-items: flex-start; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -299,302 +319,207 @@
 <body class="nba">
 
 <header>
-  <div class="date-line" id="date-line">Chargement…</div>
-  <div class="toggle">
-    <button class="toggle-btn active" onclick="switchSport('nba')" id="btn-nba">NBA</button>
-    <button class="toggle-btn" onclick="switchSport('nfl')" id="btn-nfl">NFL</button>
+  <div class="top-bar">
+    <div class="toggle">
+      <button class="toggle-btn active" onclick="switchSport('nba')" id="btn-nba">NBA</button>
+      <button class="toggle-btn" onclick="switchSport('nfl')" id="btn-nfl">NFL</button>
+    </div>
+    <div class="date-selector">
+      <span class="date-icon">📅</span>
+      <select id="date-select" onchange="loadDate(this.value)">
+        <option value="">Chargement…</option>
+      </select>
+    </div>
   </div>
 </header>
 
 <div class="container">
-
-  <!-- NBA Section -->
   <div class="sport-section visible" id="section-nba">
-    <div class="section-label">Résultats de la nuit — NBA</div>
-
-    <!-- Match 1 -->
-    <div class="match-card" onclick="toggleMatch(this)">
-      <div class="match-header">
-        <div class="team-score">
-          <span class="team-name">Boston Celtics</span>
-          <span class="score-block">118</span>
-          <span class="vs">—</span>
-          <span class="score-block">104</span>
-          <span class="team-name">LA Lakers</span>
-        </div>
-        <span class="mvp-pill">⭐ Brown 34pts</span>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="stats-panel">
-        <div class="match-summary">
-          Boston a pas joué, Boston a <strong>dominé</strong>. Brown en mode patron — 34 points, la gueule ouverte, les Lakers qui savent plus quoi faire. LeBron a sorti ses 22 points mais c'était du cosmétique. Davis a tenté le coup avec 12 rebonds mais quand ton équipe prend +14 dans le money time, les stats individuelles ça sert à rien. <strong>Les Celtics sont une machine</strong>, et LA s'est fait rouler dessus.
-        </div>
-        <div class="team-stats-block">
-          <div class="team-stats-title">Boston Celtics</div>
-          <table class="stats-table">
-            <thead>
-              <tr>
-                <th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>J. Brown</td><td>36</td><td class="stat-highlight">34</td><td>6</td><td>4</td><td>2</td><td>1</td><td>+18</td></tr>
-              <tr><td>J. Tatum</td><td>35</td><td class="stat-highlight">28</td><td>8</td><td>6</td><td>1</td><td>0</td><td>+14</td></tr>
-              <tr><td>K. Porzingis</td><td>28</td><td>14</td><td>7</td><td>2</td><td>0</td><td>3</td><td>+10</td></tr>
-              <tr><td>D. White</td><td>30</td><td>12</td><td>3</td><td>5</td><td>3</td><td>1</td><td>+12</td></tr>
-              <tr><td>J. Holiday</td><td>32</td><td>10</td><td>5</td><td>7</td><td>2</td><td>0</td><td>+8</td></tr>
-              <tr><td>P. Pritchard</td><td>18</td><td>8</td><td>2</td><td>1</td><td>1</td><td>0</td><td>+4</td></tr>
-              <tr><td>L. Kornet</td><td>14</td><td>4</td><td>4</td><td>0</td><td>0</td><td>2</td><td>+6</td></tr>
-              <tr><td>S. Hauser</td><td>12</td><td>6</td><td>1</td><td>0</td><td>0</td><td>0</td><td>+2</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="team-stats-block">
-          <div class="team-stats-title">Los Angeles Lakers</div>
-          <table class="stats-table">
-            <thead>
-              <tr>
-                <th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>A. Davis</td><td>35</td><td class="stat-highlight">26</td><td>12</td><td>3</td><td>1</td><td>3</td><td>-10</td></tr>
-              <tr><td>L. James</td><td>34</td><td class="stat-highlight">22</td><td>7</td><td>9</td><td>1</td><td>0</td><td>-14</td></tr>
-              <tr><td>A. Reaves</td><td>30</td><td>18</td><td>3</td><td>4</td><td>2</td><td>0</td><td>-8</td></tr>
-              <tr><td>R. Russell</td><td>28</td><td>14</td><td>2</td><td>5</td><td>1</td><td>0</td><td>-12</td></tr>
-              <tr><td>C. Wood</td><td>20</td><td>8</td><td>6</td><td>1</td><td>0</td><td>1</td><td>-6</td></tr>
-              <tr><td>G. Vincent</td><td>18</td><td>6</td><td>2</td><td>2</td><td>0</td><td>0</td><td>-4</td></tr>
-              <tr><td>J. Vanderbilt</td><td>15</td><td>4</td><td>5</td><td>1</td><td>1</td><td>0</td><td>-2</td></tr>
-              <tr><td>M. Christie</td><td>12</td><td>6</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Match 2 -->
-    <div class="match-card" onclick="toggleMatch(this)">
-      <div class="match-header">
-        <div class="team-score">
-          <span class="team-name">Golden State</span>
-          <span class="score-block">121</span>
-          <span class="vs">—</span>
-          <span class="score-block">109</span>
-          <span class="team-name">Denver Nuggets</span>
-        </div>
-        <span class="mvp-pill">⭐ Curry 38pts</span>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="stats-panel">
-        <div class="match-summary">
-          <strong>38 points. 7 passes.</strong> Curry a pas joué un match de basket, il a joué un récital. Les Warriors menaient de 20 à la mi-temps et Draymond faisait déjà la gueule sur le banc adverse par anticipation. Jokic a sorti un triple-double parce que c'est Jokic, mais quand ton équipe marque 109 points face à Golden State en mode croisière, t'as perdu avant même de commencer. <strong>Chase Center était en feu.</strong> Denver peut aller se coucher.
-        </div>
-        <div class="team-stats-block">
-          <div class="team-stats-title">Golden State Warriors</div>
-          <table class="stats-table">
-            <thead>
-              <tr><th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>S. Curry</td><td>36</td><td class="stat-highlight">38</td><td>5</td><td>7</td><td>2</td><td>0</td><td>+22</td></tr>
-              <tr><td>K. Thompson</td><td>32</td><td class="stat-highlight">24</td><td>4</td><td>2</td><td>1</td><td>0</td><td>+14</td></tr>
-              <tr><td>D. Green</td><td>30</td><td>8</td><td>9</td><td>11</td><td>2</td><td>1</td><td>+16</td></tr>
-              <tr><td>A. Wiggins</td><td>28</td><td>18</td><td>5</td><td>2</td><td>1</td><td>1</td><td>+10</td></tr>
-              <tr><td>J. Poole</td><td>24</td><td>14</td><td>2</td><td>4</td><td>0</td><td>0</td><td>+8</td></tr>
-              <tr><td>G. Payton II</td><td>20</td><td>6</td><td>3</td><td>2</td><td>3</td><td>0</td><td>+4</td></tr>
-              <tr><td>K. Looney</td><td>18</td><td>4</td><td>8</td><td>1</td><td>0</td><td>1</td><td>+6</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="team-stats-block">
-          <div class="team-stats-title">Denver Nuggets</div>
-          <table class="stats-table">
-            <thead>
-              <tr><th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>N. Jokic</td><td>36</td><td class="stat-highlight">28</td><td>13</td><td>10</td><td>1</td><td>2</td><td>-14</td></tr>
-              <tr><td>J. Murray</td><td>34</td><td class="stat-highlight">22</td><td>4</td><td>7</td><td>2</td><td>0</td><td>-12</td></tr>
-              <tr><td>M. Porter Jr.</td><td>30</td><td>18</td><td>7</td><td>2</td><td>0</td><td>1</td><td>-10</td></tr>
-              <tr><td>K. Caldwell-Pope</td><td>28</td><td>14</td><td>3</td><td>2</td><td>1</td><td>0</td><td>-8</td></tr>
-              <tr><td>A. Gordon</td><td>26</td><td>10</td><td>6</td><td>3</td><td>1</td><td>1</td><td>-6</td></tr>
-              <tr><td>C. Braun</td><td>18</td><td>8</td><td>3</td><td>1</td><td>0</td><td>0</td><td>-4</td></tr>
-              <tr><td>V. Zubac</td><td>14</td><td>4</td><td>5</td><td>0</td><td>0</td><td>1</td><td>-2</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <div class="section-label" id="label-nba">NBA</div>
+    <div id="nba-content"><div class="state-msg">Chargement des données…</div></div>
   </div>
-
-  <!-- NFL Section -->
   <div class="sport-section" id="section-nfl">
-    <div class="section-label">Résultats de la nuit — NFL</div>
-
-    <div class="match-card" onclick="toggleMatch(this)">
-      <div class="match-header">
-        <div class="team-score">
-          <span class="team-name">KC Chiefs</span>
-          <span class="score-block">27</span>
-          <span class="vs">—</span>
-          <span class="score-block">17</span>
-          <span class="team-name">Buffalo Bills</span>
-        </div>
-        <span class="mvp-pill">⭐ Mahomes 312 yds</span>
-        <span class="expand-icon">▼</span>
-      </div>
-      <div class="stats-panel">
-
-        <div class="match-summary">
-          Mahomes a fait ce que Mahomes fait — <strong>312 yards, 3 TDs, zéro interception</strong>, et un sourire en coin pendant qu'Allen se noyait dans ses propres erreurs. Josh Allen a lancé 2 picks dans les moments chauds, le genre de décisions qui font hurler les coachs et pleurer les parieurs. La défense des Chiefs a étouffé Buffalo en deuxième mi-temps. <strong>Arrowhead était un volcan.</strong> Les Bills rentrent chez eux avec rien.
-        </div>
-        <!-- KC Offense -->
-        <div class="team-stats-block">
-          <div class="team-stats-title">Kansas City Chiefs — Attaque</div>
-
-          <div class="position-group">
-            <div class="position-label">QB</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Comp</th><th>Att</th><th>Yds</th><th>TD</th><th>INT</th><th>Rating</th></tr></thead>
-              <tbody>
-                <tr><td>P. Mahomes</td><td>26</td><td>38</td><td class="stat-highlight">312</td><td>3</td><td>0</td><td class="stat-highlight">118.4</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">RB</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Att</th><th>Yds</th><th>Avg</th><th>TD</th><th>Rec</th><th>RecYds</th></tr></thead>
-              <tbody>
-                <tr><td>I. Pacheco</td><td>18</td><td class="stat-highlight">94</td><td>5.2</td><td>1</td><td>3</td><td>22</td></tr>
-                <tr><td>C. Edwards-H.</td><td>6</td><td>28</td><td>4.7</td><td>0</td><td>2</td><td>14</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">WR</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
-              <tbody>
-                <tr><td>T. Hill</td><td>8</td><td>11</td><td class="stat-highlight">112</td><td>14.0</td><td>1</td></tr>
-                <tr><td>M. Hardman</td><td>4</td><td>6</td><td>58</td><td>14.5</td><td>0</td></tr>
-                <tr><td>J. Watson</td><td>3</td><td>4</td><td>34</td><td>11.3</td><td>0</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">TE</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
-              <tbody>
-                <tr><td>T. Kelce</td><td>7</td><td>9</td><td class="stat-highlight">82</td><td>11.7</td><td>1</td></tr>
-                <tr><td>B. Bell</td><td>1</td><td>2</td><td>10</td><td>10.0</td><td>0</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- KC Defense -->
-        <div class="team-stats-block">
-          <div class="team-stats-title">Kansas City Chiefs — Défense</div>
-          <table class="stats-table">
-            <thead><tr><th>Joueur</th><th>Tckl</th><th>Sacks</th><th>TFL</th><th>INT</th><th>PD</th><th>FF</th></tr></thead>
-            <tbody>
-              <tr><td>C. Jones</td><td>4</td><td class="stat-highlight">2.5</td><td>3</td><td>0</td><td>0</td><td>1</td></tr>
-              <tr><td>L. Sneed</td><td>7</td><td>0</td><td>0</td><td class="stat-highlight">1</td><td>2</td><td>0</td></tr>
-              <tr><td>N. Bolton</td><td>9</td><td>0.5</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
-              <tr><td>D. Ward</td><td>5</td><td>0</td><td>0</td><td>0</td><td>3</td><td>0</td></tr>
-              <tr><td>G. Clark</td><td>6</td><td>1.0</td><td>2</td><td>0</td><td>0</td><td>1</td></tr>
-              <tr><td>J. Reed</td><td>4</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
-              <tr><td>B. Thompson</td><td>3</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Bills Offense -->
-        <div class="team-stats-block">
-          <div class="team-stats-title">Buffalo Bills — Attaque</div>
-
-          <div class="position-group">
-            <div class="position-label">QB</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Comp</th><th>Att</th><th>Yds</th><th>TD</th><th>INT</th><th>Rating</th></tr></thead>
-              <tbody>
-                <tr><td>J. Allen</td><td>21</td><td>35</td><td class="stat-highlight">224</td><td>1</td><td>2</td><td>72.6</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">RB</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Att</th><th>Yds</th><th>Avg</th><th>TD</th><th>Rec</th><th>RecYds</th></tr></thead>
-              <tbody>
-                <tr><td>D. Cook</td><td>14</td><td>52</td><td>3.7</td><td>1</td><td>2</td><td>18</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">WR</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
-              <tbody>
-                <tr><td>S. Diggs</td><td>7</td><td>10</td><td class="stat-highlight">88</td><td>12.6</td><td>0</td></tr>
-                <tr><td>G. Davis</td><td>4</td><td>7</td><td>52</td><td>13.0</td><td>1</td></tr>
-                <tr><td>K. McKenzie</td><td>2</td><td>4</td><td>28</td><td>14.0</td><td>0</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="position-group">
-            <div class="position-label">TE</div>
-            <table class="stats-table">
-              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
-              <tbody>
-                <tr><td>D. Kincaid</td><td>4</td><td>6</td><td>44</td><td>11.0</td><td>0</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Bills Defense -->
-        <div class="team-stats-block">
-          <div class="team-stats-title">Buffalo Bills — Défense</div>
-          <table class="stats-table">
-            <thead><tr><th>Joueur</th><th>Tckl</th><th>Sacks</th><th>TFL</th><th>INT</th><th>PD</th><th>FF</th></tr></thead>
-            <tbody>
-              <tr><td>M. Milano</td><td>8</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
-              <tr><td>G. Rousseau</td><td>3</td><td class="stat-highlight">1.5</td><td>2</td><td>0</td><td>0</td><td>1</td></tr>
-              <tr><td>T. White</td><td>6</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
-              <tr><td>J. Poyer</td><td>7</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
-              <tr><td>D. James</td><td>5</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
-              <tr><td>A. Epenesa</td><td>4</td><td>1.0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
-              <tr><td>L. Lloyd</td><td>6</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-    </div>
+    <div class="section-label" id="label-nfl">NFL</div>
+    <div id="nfl-content"><div class="state-msg">Chargement des données…</div></div>
   </div>
-
 </div>
 
 <footer>Mis à jour automatiquement chaque matin · Lucas Bateau</footer>
 
 <script>
-  // Date
-  const now = new Date();
-  const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-  document.getElementById('date-line').textContent =
-    now.toLocaleDateString('fr-FR', opts);
+  const REPO = 'bateaulucas-del/sports-daily';
+  const DATA_URL = `https://raw.githubusercontent.com/${REPO}/main/historique.json`;
 
-  // Toggle sport
+  let allData = {};
+  let currentSport = 'nba';
+  let currentDate = '';
+
+  // Charger l'historique
+  async function loadHistory() {
+    try {
+      const res = await fetch(DATA_URL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('Pas encore de données');
+      allData = await res.json();
+      populateDateSelector();
+    } catch(e) {
+      document.getElementById('nba-content').innerHTML = '<div class="state-msg">Les données apparaîtront demain matin après le premier update automatique.</div>';
+      document.getElementById('nfl-content').innerHTML = '<div class="state-msg">Les données apparaîtront demain matin après le premier update automatique.</div>';
+      document.getElementById('date-select').innerHTML = '<option>Aucune donnée</option>';
+    }
+  }
+
+  function populateDateSelector() {
+    const dates = Object.keys(allData).sort((a, b) => b.localeCompare(a));
+    const sel = document.getElementById('date-select');
+    sel.innerHTML = dates.map(d => {
+      const label = formatDateLabel(d);
+      return `<option value="${d}">${label}</option>`;
+    }).join('');
+    if (dates.length > 0) {
+      currentDate = dates[0];
+      renderDay(currentDate);
+    }
+  }
+
+  function formatDateLabel(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+    return d.toLocaleDateString('fr-FR', opts);
+  }
+
+  function loadDate(dateStr) {
+    currentDate = dateStr;
+    renderDay(dateStr);
+  }
+
+  function renderDay(dateStr) {
+    const day = allData[dateStr];
+    if (!day) return;
+
+    // Update labels
+    document.getElementById('label-nba').textContent = `NBA — ${formatDateLabel(dateStr)}`;
+    document.getElementById('label-nfl').textContent = `NFL — ${formatDateLabel(dateStr)}`;
+
+    // Render NBA
+    renderMatches('nba-content', day.nba || [], 'nba');
+    renderMatches('nfl-content', day.nfl || [], 'nfl');
+  }
+
+  function renderMatches(containerId, matches, sport) {
+    const el = document.getElementById(containerId);
+    if (!matches || matches.length === 0) {
+      el.innerHTML = '<div class="state-msg">Aucun match cette nuit.</div>';
+      return;
+    }
+    el.innerHTML = matches.map(m => renderMatchCard(m, sport)).join('');
+  }
+
+  function renderMatchCard(m, sport) {
+    const statsHtml = sport === 'nba' ? renderNBAStats(m) : renderNFLStats(m);
+    return `
+      <div class="match-card" onclick="toggleMatch(this)">
+        <div class="match-header">
+          <div class="team-score">
+            <span class="team-name">${m.team1}</span>
+            <span class="score-block">${m.score1}</span>
+            <span class="vs">—</span>
+            <span class="score-block">${m.score2}</span>
+            <span class="team-name">${m.team2}</span>
+          </div>
+          <span class="mvp-pill">⭐ ${m.mvp}</span>
+          <span class="expand-icon">▼</span>
+        </div>
+        <div class="stats-panel">
+          <div class="match-summary">${m.summary}</div>
+          ${statsHtml}
+        </div>
+      </div>`;
+  }
+
+  function renderNBAStats(m) {
+    const renderTeam = (teamName, players) => {
+      if (!players || players.length === 0) return '';
+      const rows = players.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.min}</td>
+          <td class="${p.pts >= 20 ? 'stat-highlight' : ''}">${p.pts}</td>
+          <td>${p.reb}</td>
+          <td>${p.ast}</td>
+          <td>${p.stl}</td>
+          <td>${p.blk}</td>
+          <td>${p.pm}</td>
+        </tr>`).join('');
+      return `
+        <div class="team-stats-block">
+          <div class="team-stats-title">${teamName}</div>
+          <table class="stats-table">
+            <thead><tr><th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    };
+    return renderTeam(m.team1, m.players1) + renderTeam(m.team2, m.players2);
+  }
+
+  function renderNFLStats(m) {
+    const renderSide = (teamName, offense, defense) => {
+      const posGroups = ['QB', 'RB', 'WR', 'TE'];
+      const offHeaders = { QB: 'Comp/Att/Yds/TD/INT/Rating', RB: 'Att/Yds/Avg/TD/Rec/RecYds', WR: 'Rec/Cibles/Yds/Avg/TD', TE: 'Rec/Cibles/Yds/Avg/TD' };
+
+      let offHtml = posGroups.map(pos => {
+        const players = offense && offense[pos];
+        if (!players || players.length === 0) return '';
+        const headers = offHeaders[pos].split('/');
+        const rows = players.map(p => {
+          const vals = p.stats.map((v, i) => `<td${i === 2 ? ' class="stat-highlight"' : ''}>${v}</td>`).join('');
+          return `<tr><td>${p.name}</td>${vals}</tr>`;
+        }).join('');
+        return `
+          <div class="position-group">
+            <div class="position-label">${pos}</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+      }).join('');
+
+      let defHtml = '';
+      if (defense && defense.length > 0) {
+        const rows = defense.map(p => `
+          <tr>
+            <td>${p.name}</td>
+            <td>${p.tckl}</td>
+            <td class="${parseFloat(p.sacks) > 0 ? 'stat-highlight' : ''}">${p.sacks}</td>
+            <td>${p.tfl}</td>
+            <td class="${p.int > 0 ? 'stat-highlight' : ''}">${p.int}</td>
+            <td>${p.pd}</td>
+            <td>${p.ff}</td>
+          </tr>`).join('');
+        defHtml = `
+          <div class="team-stats-block">
+            <div class="team-stats-title">${teamName} — Défense</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Tckl</th><th>Sacks</th><th>TFL</th><th>INT</th><th>PD</th><th>FF</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+      }
+
+      return `
+        <div class="team-stats-block">
+          <div class="team-stats-title">${teamName} — Attaque</div>
+          ${offHtml}
+        </div>
+        ${defHtml}`;
+    };
+
+    return renderSide(m.team1, m.offense1, m.defense1) + renderSide(m.team2, m.offense2, m.defense2);
+  }
+
   function switchSport(sport) {
+    currentSport = sport;
     document.body.className = sport;
     document.querySelectorAll('.sport-section').forEach(s => s.classList.remove('visible'));
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -602,10 +527,11 @@
     document.getElementById('btn-' + sport).classList.add('active');
   }
 
-  // Toggle match detail
   function toggleMatch(card) {
     card.classList.toggle('open');
   }
+
+  loadHistory();
 </script>
 </body>
 </html>
