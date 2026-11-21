@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Daily</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --nba-bg: #060b18;
+      --nba-surface: #0d1526;
+      --nba-border: #1a2a44;
+      --nba-accent: #1a6db5;
+      --nba-accent-soft: #1d3a5c;
+      --nba-stat: #60a5fa;
+      --nba-toggle-active: #1a6db5;
+
+      --nfl-bg: #100608;
+      --nfl-surface: #1a0a0c;
+      --nfl-border: #3a1418;
+      --nfl-accent: #b51a26;
+      --nfl-accent-soft: #5c1d22;
+      --nfl-stat: #f87171;
+      --nfl-toggle-active: #b51a26;
+
+      --text-primary: #f0f4f8;
+      --text-secondary: #8899aa;
+      --text-muted: #445566;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background 0.4s ease;
+    }
+
+    body.nba {
+      --bg: var(--nba-bg);
+      --surface: var(--nba-surface);
+      --border: var(--nba-border);
+      --accent: var(--nba-accent);
+      --accent-soft: var(--nba-accent-soft);
+      --stat-color: var(--nba-stat);
+    }
+
+    body.nfl {
+      --bg: var(--nfl-bg);
+      --surface: var(--nfl-surface);
+      --border: var(--nfl-border);
+      --accent: var(--nfl-accent);
+      --accent-soft: var(--nfl-accent-soft);
+      --stat-color: var(--nfl-stat);
+    }
+
+    /* Header */
+    header {
+      padding: 2rem 1.5rem 0;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .date-line {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
+
+    /* Toggle */
+    .toggle {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+
+    .toggle-btn {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      padding: 0.6rem 2rem;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Matches */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .sport-section { display: none; }
+    .sport-section.visible { display: block; }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .match-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .match-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      user-select: none;
+      gap: 1rem;
+    }
+
+    .match-header:hover { background: rgba(255,255,255,0.03); }
+
+    .team-score {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex: 1;
+    }
+
+    .team-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 110px;
+    }
+
+    .score-block {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: var(--stat-color);
+      line-height: 1;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .vs {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .mvp-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--accent-soft);
+      color: var(--stat-color);
+      border-radius: 4px;
+      padding: 0.25rem 0.6rem;
+      white-space: nowrap;
+    }
+
+    .expand-icon {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .match-card.open .expand-icon { transform: rotate(180deg); }
+
+    /* Stats panel */
+    .stats-panel {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 0 1.25rem 1.25rem;
+    }
+
+    .match-card.open .stats-panel { display: block; }
+
+    .team-stats-block { margin-top: 1.25rem; }
+
+    .team-stats-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    /* NBA stats table */
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .stats-table th {
+      text-align: right;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .stats-table th:first-child { text-align: left; }
+
+    .stats-table td {
+      text-align: right;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .stats-table td:first-child {
+      text-align: left;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .stats-table tr:last-child td { border-bottom: none; }
+
+    .stat-highlight {
+      color: var(--stat-color);
+      font-weight: 600;
+    }
+
+    /* NFL position group */
+    .position-group { margin-bottom: 1rem; }
+
+    .position-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      padding-left: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      .team-name { min-width: 80px; font-size: 0.82rem; }
+      .score-block { font-size: 1.6rem; }
+      .mvp-pill { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body class="nba">
+
+<header>
+  <div class="date-line" id="date-line">Chargement…</div>
+  <div class="toggle">
+    <button class="toggle-btn active" onclick="switchSport('nba')" id="btn-nba">NBA</button>
+    <button class="toggle-btn" onclick="switchSport('nfl')" id="btn-nfl">NFL</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- NBA Section -->
+  <div class="sport-section visible" id="section-nba">
+    <div class="section-label">Résultats de la nuit — NBA</div>
+
+    <!-- Match 1 -->
+    <div class="match-card" onclick="toggleMatch(this)">
+      <div class="match-header">
+        <div class="team-score">
+          <span class="team-name">Boston Celtics</span>
+          <span class="score-block">118</span>
+          <span class="vs">—</span>
+          <span class="score-block">104</span>
+          <span class="team-name">LA Lakers</span>
+        </div>
+        <span class="mvp-pill">⭐ Brown 34pts</span>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="stats-panel">
+        <div class="team-stats-block">
+          <div class="team-stats-title">Boston Celtics</div>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>J. Brown</td><td>36</td><td class="stat-highlight">34</td><td>6</td><td>4</td><td>2</td><td>1</td><td>+18</td></tr>
+              <tr><td>J. Tatum</td><td>35</td><td class="stat-highlight">28</td><td>8</td><td>6</td><td>1</td><td>0</td><td>+14</td></tr>
+              <tr><td>K. Porzingis</td><td>28</td><td>14</td><td>7</td><td>2</td><td>0</td><td>3</td><td>+10</td></tr>
+              <tr><td>D. White</td><td>30</td><td>12</td><td>3</td><td>5</td><td>3</td><td>1</td><td>+12</td></tr>
+              <tr><td>J. Holiday</td><td>32</td><td>10</td><td>5</td><td>7</td><td>2</td><td>0</td><td>+8</td></tr>
+              <tr><td>P. Pritchard</td><td>18</td><td>8</td><td>2</td><td>1</td><td>1</td><td>0</td><td>+4</td></tr>
+              <tr><td>L. Kornet</td><td>14</td><td>4</td><td>4</td><td>0</td><td>0</td><td>2</td><td>+6</td></tr>
+              <tr><td>S. Hauser</td><td>12</td><td>6</td><td>1</td><td>0</td><td>0</td><td>0</td><td>+2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="team-stats-block">
+          <div class="team-stats-title">Los Angeles Lakers</div>
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>A. Davis</td><td>35</td><td class="stat-highlight">26</td><td>12</td><td>3</td><td>1</td><td>3</td><td>-10</td></tr>
+              <tr><td>L. James</td><td>34</td><td class="stat-highlight">22</td><td>7</td><td>9</td><td>1</td><td>0</td><td>-14</td></tr>
+              <tr><td>A. Reaves</td><td>30</td><td>18</td><td>3</td><td>4</td><td>2</td><td>0</td><td>-8</td></tr>
+              <tr><td>R. Russell</td><td>28</td><td>14</td><td>2</td><td>5</td><td>1</td><td>0</td><td>-12</td></tr>
+              <tr><td>C. Wood</td><td>20</td><td>8</td><td>6</td><td>1</td><td>0</td><td>1</td><td>-6</td></tr>
+              <tr><td>G. Vincent</td><td>18</td><td>6</td><td>2</td><td>2</td><td>0</td><td>0</td><td>-4</td></tr>
+              <tr><td>J. Vanderbilt</td><td>15</td><td>4</td><td>5</td><td>1</td><td>1</td><td>0</td><td>-2</td></tr>
+              <tr><td>M. Christie</td><td>12</td><td>6</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match 2 -->
+    <div class="match-card" onclick="toggleMatch(this)">
+      <div class="match-header">
+        <div class="team-score">
+          <span class="team-name">Golden State</span>
+          <span class="score-block">121</span>
+          <span class="vs">—</span>
+          <span class="score-block">109</span>
+          <span class="team-name">Denver Nuggets</span>
+        </div>
+        <span class="mvp-pill">⭐ Curry 38pts</span>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="stats-panel">
+        <div class="team-stats-block">
+          <div class="team-stats-title">Golden State Warriors</div>
+          <table class="stats-table">
+            <thead>
+              <tr><th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>S. Curry</td><td>36</td><td class="stat-highlight">38</td><td>5</td><td>7</td><td>2</td><td>0</td><td>+22</td></tr>
+              <tr><td>K. Thompson</td><td>32</td><td class="stat-highlight">24</td><td>4</td><td>2</td><td>1</td><td>0</td><td>+14</td></tr>
+              <tr><td>D. Green</td><td>30</td><td>8</td><td>9</td><td>11</td><td>2</td><td>1</td><td>+16</td></tr>
+              <tr><td>A. Wiggins</td><td>28</td><td>18</td><td>5</td><td>2</td><td>1</td><td>1</td><td>+10</td></tr>
+              <tr><td>J. Poole</td><td>24</td><td>14</td><td>2</td><td>4</td><td>0</td><td>0</td><td>+8</td></tr>
+              <tr><td>G. Payton II</td><td>20</td><td>6</td><td>3</td><td>2</td><td>3</td><td>0</td><td>+4</td></tr>
+              <tr><td>K. Looney</td><td>18</td><td>4</td><td>8</td><td>1</td><td>0</td><td>1</td><td>+6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="team-stats-block">
+          <div class="team-stats-title">Denver Nuggets</div>
+          <table class="stats-table">
+            <thead>
+              <tr><th>Joueur</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>+/-</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>N. Jokic</td><td>36</td><td class="stat-highlight">28</td><td>13</td><td>10</td><td>1</td><td>2</td><td>-14</td></tr>
+              <tr><td>J. Murray</td><td>34</td><td class="stat-highlight">22</td><td>4</td><td>7</td><td>2</td><td>0</td><td>-12</td></tr>
+              <tr><td>M. Porter Jr.</td><td>30</td><td>18</td><td>7</td><td>2</td><td>0</td><td>1</td><td>-10</td></tr>
+              <tr><td>K. Caldwell-Pope</td><td>28</td><td>14</td><td>3</td><td>2</td><td>1</td><td>0</td><td>-8</td></tr>
+              <tr><td>A. Gordon</td><td>26</td><td>10</td><td>6</td><td>3</td><td>1</td><td>1</td><td>-6</td></tr>
+              <tr><td>C. Braun</td><td>18</td><td>8</td><td>3</td><td>1</td><td>0</td><td>0</td><td>-4</td></tr>
+              <tr><td>V. Zubac</td><td>14</td><td>4</td><td>5</td><td>0</td><td>0</td><td>1</td><td>-2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NFL Section -->
+  <div class="sport-section" id="section-nfl">
+    <div class="section-label">Résultats de la nuit — NFL</div>
+
+    <div class="match-card" onclick="toggleMatch(this)">
+      <div class="match-header">
+        <div class="team-score">
+          <span class="team-name">KC Chiefs</span>
+          <span class="score-block">27</span>
+          <span class="vs">—</span>
+          <span class="score-block">17</span>
+          <span class="team-name">Buffalo Bills</span>
+        </div>
+        <span class="mvp-pill">⭐ Mahomes 312 yds</span>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="stats-panel">
+
+        <!-- KC Offense -->
+        <div class="team-stats-block">
+          <div class="team-stats-title">Kansas City Chiefs — Attaque</div>
+
+          <div class="position-group">
+            <div class="position-label">QB</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Comp</th><th>Att</th><th>Yds</th><th>TD</th><th>INT</th><th>Rating</th></tr></thead>
+              <tbody>
+                <tr><td>P. Mahomes</td><td>26</td><td>38</td><td class="stat-highlight">312</td><td>3</td><td>0</td><td class="stat-highlight">118.4</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">RB</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Att</th><th>Yds</th><th>Avg</th><th>TD</th><th>Rec</th><th>RecYds</th></tr></thead>
+              <tbody>
+                <tr><td>I. Pacheco</td><td>18</td><td class="stat-highlight">94</td><td>5.2</td><td>1</td><td>3</td><td>22</td></tr>
+                <tr><td>C. Edwards-H.</td><td>6</td><td>28</td><td>4.7</td><td>0</td><td>2</td><td>14</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">WR</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
+              <tbody>
+                <tr><td>T. Hill</td><td>8</td><td>11</td><td class="stat-highlight">112</td><td>14.0</td><td>1</td></tr>
+                <tr><td>M. Hardman</td><td>4</td><td>6</td><td>58</td><td>14.5</td><td>0</td></tr>
+                <tr><td>J. Watson</td><td>3</td><td>4</td><td>34</td><td>11.3</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">TE</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
+              <tbody>
+                <tr><td>T. Kelce</td><td>7</td><td>9</td><td class="stat-highlight">82</td><td>11.7</td><td>1</td></tr>
+                <tr><td>B. Bell</td><td>1</td><td>2</td><td>10</td><td>10.0</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- KC Defense -->
+        <div class="team-stats-block">
+          <div class="team-stats-title">Kansas City Chiefs — Défense</div>
+          <table class="stats-table">
+            <thead><tr><th>Joueur</th><th>Tckl</th><th>Sacks</th><th>TFL</th><th>INT</th><th>PD</th><th>FF</th></tr></thead>
+            <tbody>
+              <tr><td>C. Jones</td><td>4</td><td class="stat-highlight">2.5</td><td>3</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>L. Sneed</td><td>7</td><td>0</td><td>0</td><td class="stat-highlight">1</td><td>2</td><td>0</td></tr>
+              <tr><td>N. Bolton</td><td>9</td><td>0.5</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>D. Ward</td><td>5</td><td>0</td><td>0</td><td>0</td><td>3</td><td>0</td></tr>
+              <tr><td>G. Clark</td><td>6</td><td>1.0</td><td>2</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>J. Reed</td><td>4</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>B. Thompson</td><td>3</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bills Offense -->
+        <div class="team-stats-block">
+          <div class="team-stats-title">Buffalo Bills — Attaque</div>
+
+          <div class="position-group">
+            <div class="position-label">QB</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Comp</th><th>Att</th><th>Yds</th><th>TD</th><th>INT</th><th>Rating</th></tr></thead>
+              <tbody>
+                <tr><td>J. Allen</td><td>21</td><td>35</td><td class="stat-highlight">224</td><td>1</td><td>2</td><td>72.6</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">RB</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Att</th><th>Yds</th><th>Avg</th><th>TD</th><th>Rec</th><th>RecYds</th></tr></thead>
+              <tbody>
+                <tr><td>D. Cook</td><td>14</td><td>52</td><td>3.7</td><td>1</td><td>2</td><td>18</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">WR</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
+              <tbody>
+                <tr><td>S. Diggs</td><td>7</td><td>10</td><td class="stat-highlight">88</td><td>12.6</td><td>0</td></tr>
+                <tr><td>G. Davis</td><td>4</td><td>7</td><td>52</td><td>13.0</td><td>1</td></tr>
+                <tr><td>K. McKenzie</td><td>2</td><td>4</td><td>28</td><td>14.0</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="position-group">
+            <div class="position-label">TE</div>
+            <table class="stats-table">
+              <thead><tr><th>Joueur</th><th>Rec</th><th>Cibles</th><th>Yds</th><th>Avg</th><th>TD</th></tr></thead>
+              <tbody>
+                <tr><td>D. Kincaid</td><td>4</td><td>6</td><td>44</td><td>11.0</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bills Defense -->
+        <div class="team-stats-block">
+          <div class="team-stats-title">Buffalo Bills — Défense</div>
+          <table class="stats-table">
+            <thead><tr><th>Joueur</th><th>Tckl</th><th>Sacks</th><th>TFL</th><th>INT</th><th>PD</th><th>FF</th></tr></thead>
+            <tbody>
+              <tr><td>M. Milano</td><td>8</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>G. Rousseau</td><td>3</td><td class="stat-highlight">1.5</td><td>2</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr><td>T. White</td><td>6</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
+              <tr><td>J. Poyer</td><td>7</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+              <tr><td>D. James</td><td>5</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
+              <tr><td>A. Epenesa</td><td>4</td><td>1.0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>L. Lloyd</td><td>6</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Mis à jour automatiquement chaque matin · Lucas Bateau</footer>
+
+<script>
+  // Date
+  const now = new Date();
+  const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('date-line').textContent =
+    now.toLocaleDateString('fr-FR', opts);
+
+  // Toggle sport
+  function switchSport(sport) {
+    document.body.className = sport;
+    document.querySelectorAll('.sport-section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('section-' + sport).classList.add('visible');
+    document.getElementById('btn-' + sport).classList.add('active');
+  }
+
+  // Toggle match detail
+  function toggleMatch(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
